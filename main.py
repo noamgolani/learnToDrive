@@ -21,6 +21,10 @@ class Car(object):
 	def draw(self, screen):
 		c = 255, 0, 0
 		pygame.draw.circle(screen, c, self.l.astype(int), 15)
+
+		angle = self.diraction * np.pi / 2
+		temp = np.array([np.sin(angle) * 30, np.cos(angle) * 30]) + self.l
+		pygame.draw.line(screen, c, self.l.astype(int), temp.astype(int))
 	def getAV(self):
 		angle = self.diraction * np.pi / 2
 		return np.array([np.sin(angle) * self.a, np.cos(angle) * self.a])
@@ -42,7 +46,7 @@ while 1:
 		if event.type == pygame.QUIT:
 			sys.exit()
 	
-	car1.setDiraction(car1.getDiraction() + 0.1)	
+	car1.setDiraction((car1.getDiraction() + 0.01) % 1)	
 	car1.update()
 
 	screen.fill(white)
