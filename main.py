@@ -12,34 +12,43 @@ def main():
 	m = pygame.image.load("static/map1.png")
 	m = m.convert()
 
-	car1 = Car(200,200)
-	car1.setDiraction(0.2)
+	cars = []
+	for c in range(100):
+		cars.append(Car(80,20))
 
 	text = ["","","","","",""]
+
+	carIndex = 0
 
 	clock = pygame.time.Clock()
 	while 1:
 		clock.tick(60)	
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				sys.exit()
-		 
-		car1.update()
-		car1.updateView(m)
+				sys.exit()		 
+		
+		if pygame.key.get_pressed()[pygame.K_SPACE]:
+			carIndex += 1
+			continue
+		
+		cars[carIndex].update()
+		cars[carIndex].updateView(m)
 	
-		x,y = car1.getXY()
-		text[0] = "X: " + str(x)
-		text[1] = "Y: " + str(y)
-		text[2] = "right view: " + str(car1.getView()[0])
-		text[3] = "center view: " + str(car1.getView()[1])
-		text[4] = "left view: " + str(car1.getView()[2])
-			
+		x,y = cars[carIndex].getXY()
+
+		if x < 0 or x > width or y < 0 or y > height:
+			carIndex += 1
+			continue
+
+		text[1] = "X: " + str(x)
+		text[2] = "Y: " + str(y)
+		text[0] = "Car number: " + str(carIndex)
 
 		screen.blit(m, (0,0))
-		car1.draw(screen)
+		cars[carIndex].draw(screen)
 		
 		pygame.font.init()
-		f = pygame.font.SysFont("Comic Sans MS", 20)
+		f = pygame.font.SysFont("Comic Sans MS", 30)
 		temp = 10
 		for t in text:
 			screen.blit(f.render(t, False, (128,128, 128)),(width - 150,temp))

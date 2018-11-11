@@ -5,20 +5,22 @@ class Car(object):
 	def __init__(self, x, y):
 		self.l = np.array([0.0 + x,0.0 + y])
 		self.diraction = 0 
-		self.a = 0.01
 		self.v = np.array([0.0,0.0]) 
 		self.view = [1,1,1]
+		self.net = Net()
 	def setDiraction(self, d):
 		if d > 1: d = 1
 		if d < -1: d = -1
-		self.diraction = d
+		self.diraction = d * np.pi / 2
 	def getDiraction(self):
 		return self.diraction
 	def setAcceleration(self, a):
 		self.a = a
 	def update(self):
-		self.v += self.getAV()
-		self.l += self.v 
+		V, D = self.net.calc(self.view)
+ 		self.diraction = D * np.pi / 2
+		self.v = np.array([np.sin(self.diraction) * V, np.cos(self.diraction) * V]) * 5
+		self.l += self.v
 	def updateView(self, mapp):
 		temp1,temp2,temp3 = (self.l[0],self.l[1]), (self.l[0],self.l[1]), (self.l[0],self.l[1])
 
@@ -27,15 +29,21 @@ class Car(object):
 		for i in range(0,100):
 			if view[0] == -1:
 				temp1 = temp1[0] + np.sin(angle1), temp1[1] + np.cos(angle1)
-				if mapp.get_at((int(temp1[0]), int(temp1[1]))) == (0,0,0,255):
+				if temp1[0] < 0 or temp1[0] > mapp.get_width() or temp1[1] < 0 or temp1[1] > mapp.get_height():
+					view[0] = i/100.0
+				elif mapp.get_at((int(temp1[0]), int(temp1[1]))) == (0,0,0,255):
 					view[0] = i/100.0
 			if view[1] == -1:
 				temp2 = temp2[0] + np.sin(angle2), temp2[1] + np.cos(angle2)
-				if mapp.get_at((int(temp2[0]), int(temp2[1]))) == (0,0,0,255):
+				if temp2[0] < 0 or temp2[0] > mapp.get_width() or temp2[1] < 0 or temp2[1] > mapp.get_height():
+					view[0] = i/100.0
+				elif mapp.get_at((int(temp2[0]), int(temp2[1]))) == (0,0,0,255):
 					view[1] = i/100.0
 			if view[2] == -1:
 				temp3 = temp3[0] + np.sin(angle3), temp3[1] + np.cos(angle3)
-				if mapp.get_at((int(temp3[0]), int(temp3[1]))) == (0,0,0,255):
+				if temp3[0] < 0 or temp3[0] > mapp.get_width() or temp3[1] < 0 or temp3[1] > mapp.get_height():
+					view[0] = i/100.0
+				elif mapp.get_at((int(temp3[0]), int(temp3[1]))) == (0,0,0,255):
 					view[2] = i/100.0
 		for i in range(len(view)):
 			if view[i] == -1: view[i] = 1
@@ -46,7 +54,7 @@ class Car(object):
 		c = 255, 0, 0
 		pygame.draw.circle(screen, c, self.l.astype(int), 15)
 
-		angle = self.diraction * np.pi / 2
+		angle = self.diraction
 		temp = np.array([np.sin(angle) * 30, np.cos(angle) * 30]) + self.l
 		pygame.draw.line(screen, c, self.l.astype(int), temp.astype(int))
 
@@ -56,9 +64,17 @@ class Car(object):
 		pygame.draw.circle(screen, (128,128,255), temp.astype(int),5)
 		temp = np.array([np.sin(angle+np.pi/4) * self.view[2] * 100, np.cos(angle+np.pi/4) * self.view[2] * 100]) + self.l
 		pygame.draw.circle(screen, (128,128,255), temp.astype(int),5)
-	def getAV(self):
-		angle = self.diraction * np.pi / 2
-		return np.array([np.sin(angle) * self.a, np.cos(angle) * self.a])
 	def getXY(self):
 		return int(self.l[0]),int(self.l[1])
 
+class Net(object):
+	def __init__(self):
+		self.w1 = np.random.rand(4,5)*2-1
+		self.w2 = np.random.rand(6,5)*2-1
+		self.w3 = np.random.rand(6,2)*2-1
+	def calc(self, a):
+		a1 = np.array([1,a[0],a[1],a[2]])
+		a2 = np.append(np.tanh(a1.dot(self.w1)),[1])
+		a3 = np.append(np.tanh(a2.dot(self.w2)),[1])
+		R = np.tanh(a3.dot(self.w3))
+		return R
