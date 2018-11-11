@@ -1,13 +1,36 @@
 import sys, pygame
 import numpy as np
 
+class Net(object):
+	def __init__(self,w1 = np.zeros(4,5),w2 = np.zeros(6,5),w3 = np.zeros(6,2)):
+		self.w1 = w1
+		self.w2 = w2
+		self.w3 = w3
+	def randomize(self):
+		self.w1 = np.random.rand(4,5)
+		self.w1 = np.random.rand(5,6)
+		self.w1 = np.random.rand(6,2)
+	def calc(self, a):
+		a1 = np.array([1,a[0],a[1],a[2]])
+		a2 = np.append(np.tanh(a1.dot(self.w1)),[1])
+		a3 = np.append(np.tanh(a2.dot(self.w2)),[1])
+		R = np.tanh(a3.dot(self.w3))
+		return R
+	def getWeights(self):
+		return self.w1,self.w2,self,w3
+
 class Car(object):
-	def __init__(self, x, y):
+	def __init__(self, x, y, net = Net()):
 		self.l = np.array([0.0 + x,0.0 + y])
 		self.diraction = 0 
 		self.v = np.array([0.0,0.0]) 
 		self.view = [1,1,1]
-		self.net = Net()
+		self.net = net
+	def reset(self,x,y):
+		self.l = np.array([0.0 + x,0.0 + y])
+		self.diraction = 0 
+		self.v = np.array([0.0,0.0]) 
+		self.view = [1,1,1]
 	def setDiraction(self, d):
 		if d > 1: d = 1
 		if d < -1: d = -1
@@ -69,14 +92,3 @@ class Car(object):
 	def getVelocity(self):
 		return self.v
 
-class Net(object):
-	def __init__(self):
-		self.w1 = np.random.rand(4,5)*2-1
-		self.w2 = np.random.rand(6,5)*2-1
-		self.w3 = np.random.rand(6,2)*2-1
-	def calc(self, a):
-		a1 = np.array([1,a[0],a[1],a[2]])
-		a2 = np.append(np.tanh(a1.dot(self.w1)),[1])
-		a3 = np.append(np.tanh(a2.dot(self.w2)),[1])
-		R = np.tanh(a3.dot(self.w3))
-		return R

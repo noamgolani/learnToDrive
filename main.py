@@ -1,6 +1,7 @@
 import sys, pygame
 import numpy as np
 from lib import Car
+from lib import Net
 
 def main():
 	pygame.init()
@@ -15,9 +16,9 @@ def main():
 	m = m.convert()
 
 	cars = []
-	for c in range(10):
-		cars.append(Car(80,20))
-	scores = np.zeros(10)
+	for c in range(30):
+		cars.append(Car(80,20,Net()))
+	scores = np.zeros(30)
 
 	text = ["","","","","",""]
 
@@ -26,15 +27,18 @@ def main():
 
 	clock = pygame.time.Clock()
 	while 1:
-		clock.tick(60)
+		#clock.tick(60)
 		
-		if carIndex >= 10:
+		if carIndex >= len(cars):
 			print "Done"
-			A = sorted(scores[::-1])
-			carIndex = np.where(scores == A[0])[0][0]
-			print carIndex
-			cars[carIndex].setXY(80,20)	
-		
+			tempc = []
+			for i in scores.argsort()[::-1]:
+				tempc.append(cars[i])
+			cars = tempc
+			for car in cars:
+				car.reset(80,20)
+			carIndex = 0	
+
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				sys.exit()		 
