@@ -2,22 +2,40 @@ import sys, pygame
 import numpy as np
 
 class Net(object):
-	def __init__(self,w1 = np.zeros(4,5),w2 = np.zeros(6,5),w3 = np.zeros(6,2)):
+	def __init__(self, w1 = np.zeros((4,5)), w2 = np.zeros((6,5)), w3 = np.zeros((6,2))):
 		self.w1 = w1
 		self.w2 = w2
 		self.w3 = w3
 	def randomize(self):
-		self.w1 = np.random.rand(4,5)
-		self.w1 = np.random.rand(5,6)
-		self.w1 = np.random.rand(6,2)
+		self.w1 = np.random.rand(4,5) * 2 - 1
+		self.w2 = np.random.rand(6,5) * 2 - 1
+		self.w3 = np.random.rand(6,2) * 2 - 1
 	def calc(self, a):
 		a1 = np.array([1,a[0],a[1],a[2]])
 		a2 = np.append(np.tanh(a1.dot(self.w1)),[1])
 		a3 = np.append(np.tanh(a2.dot(self.w2)),[1])
 		R = np.tanh(a3.dot(self.w3))
 		return R
+	def setWeights(self, w1,w2,w3):
+		self.w1 = w1
+		self.w2 = w2
+		self.w3 = w3
 	def getWeights(self):
-		return self.w1,self.w2,self,w3
+		return self.w1,self.w2,self.w3
+	def CHILD(n1,n2):
+		def a(a ,b):
+			if np.random.rand() < 0.02:
+				return (np.random.rand() * 2 - 1)
+			else: 
+				if np.random.rand() > 0.5:
+					return a
+				else :
+					return b
+		a1,a2,a3 = n1.getWeights()
+		b1,b2,b3 = n2.getWeights()
+		F = np.vectorize(a)
+		n = Net(F(a1,b1),F(a2,b2),F(a3,b3))
+		return n
 
 class Car(object):
 	def __init__(self, x, y, net = Net()):
@@ -91,4 +109,5 @@ class Car(object):
 		  self.l = np.array([0.0 + x,0.0 + y])
 	def getVelocity(self):
 		return self.v
-
+	def getNet(self):
+		return self.net
