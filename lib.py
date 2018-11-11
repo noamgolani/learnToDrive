@@ -14,8 +14,6 @@ class Car(object):
 		self.diraction = d * np.pi / 2
 	def getDiraction(self):
 		return self.diraction
-	def setAcceleration(self, a):
-		self.a = a
 	def update(self):
 		V, D = self.net.calc(self.view)
  		self.diraction = D * np.pi / 2
@@ -66,6 +64,10 @@ class Car(object):
 		pygame.draw.circle(screen, (128,128,255), temp.astype(int),5)
 	def getXY(self):
 		return int(self.l[0]),int(self.l[1])
+	def setXY(self, x, y):
+		  self.l = np.array([0.0 + x,0.0 + y])
+	def getVelocity(self):
+		return self.v
 
 class Net(object):
 	def __init__(self):
