@@ -5,11 +5,13 @@ from lib import Car
 def main():
 	pygame.init()
 
+	pygame.key.set_repeat(100,10)		
+	
 	size = width, height = 960, 640
 	white = 255, 255, 255
 
 	screen = pygame.display.set_mode(size)
-	m = pygame.image.load("static/map1.png")
+	m = pygame.image.load("static/map2.png")
 	m = m.convert()
 
 	cars = []
@@ -19,6 +21,7 @@ def main():
 	text = ["","","","","",""]
 
 	carIndex = 0
+	space = False
 
 	clock = pygame.time.Clock()
 	while 1:
@@ -26,17 +29,21 @@ def main():
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				sys.exit()		 
-		
-		if pygame.key.get_pressed()[pygame.K_SPACE]:
-			carIndex += 1
-			continue
-		
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_SPACE:
+					if not space:
+						space = True
+						carIndex += 1
+						continue
+			if event.type == pygame.KEYUP:
+				if event.key == pygame.K_SPACE:
+					space = False
 		cars[carIndex].update()
 		cars[carIndex].updateView(m)
 	
 		x,y = cars[carIndex].getXY()
 
-		if x < 0 or x > width or y < 0 or y > height:
+		if x < 0 or x > width or y < 0 or y > height or m.get_at((x,y)) == (255,200,255,255):
 			carIndex += 1
 			continue
 
