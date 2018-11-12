@@ -2,19 +2,23 @@ import sys, pygame
 import numpy as np
 
 class Net(object):
-	def __init__(self, w1 = np.zeros((4,5)), w2 = np.zeros((6,5)), w3 = np.zeros((6,2))):
+	def __init__(self, w1 = np.zeros((3,5)), w2 = np.zeros((5,5)), w3 = np.zeros((5,2))):
 		self.w1 = w1
 		self.w2 = w2
 		self.w3 = w3
 	def randomize(self):
-		self.w1 = np.random.rand(4,5) * 2 - 1
-		self.w2 = np.random.rand(6,5) * 2 - 1
-		self.w3 = np.random.rand(6,2) * 2 - 1
+		self.w1 = np.random.rand(3,5) * 2 -1 
+		self.w2 = np.random.rand(5,5) * 2 -1
+		self.w3 = np.random.rand(5,2) * 2 -1
 	def calc(self, a):
-		a1 = np.array([1,a[0],a[1],a[2]])
-		a2 = np.append(np.tanh(a1.dot(self.w1)),[1])
-		a3 = np.append(np.tanh(a2.dot(self.w2)),[1])
-		R = np.tanh(a3.dot(self.w3))
+		#sigmoid = lambda x: 1 / (1 + np.exp(-x))
+		a1 = np.array([a[0],a[1],a[2]])
+		b1 = a1.dot(self.w1)
+		a2 = np.tanh(b1)
+		b2 = a2.dot(self.w2)
+		a3 = np.tanh(b2)
+		b3 = a3.dot(self.w3)
+		R = np.tanh(b3)
 		return R
 	def setWeights(self, w1,w2,w3):
 		self.w1 = w1
@@ -24,8 +28,8 @@ class Net(object):
 		return self.w1,self.w2,self.w3
 	def CHILD(n1,n2):
 		def a(a ,b):
-			if np.random.rand() < 0.02:
-				return (np.random.rand() * 2 - 1)
+			if np.random.rand() < 0.015:
+				return np.random.rand() * 2 - 1 
 			else: 
 				if np.random.rand() > 0.5:
 					return a
@@ -46,7 +50,7 @@ class Car(object):
 		self.net = net
 	def reset(self,x,y):
 		self.l = np.array([0.0 + x,0.0 + y])
-		self.diraction = 0 
+		self.diraction = 0
 		self.v = np.array([0.0,0.0]) 
 		self.view = [1,1,1]
 	def setDiraction(self, d):
@@ -57,6 +61,7 @@ class Car(object):
 		return self.diraction
 	def update(self):
 		V, D = self.net.calc(self.view)
+		print V, D
  		self.diraction = D * np.pi / 2
 		self.v = np.array([np.sin(self.diraction) * V, np.cos(self.diraction) * V]) * 5
 		self.l += self.v

@@ -26,12 +26,12 @@ def main():
 	init()	
 
 	cars = []
-	for i in range(30):
+	for i in range(24):
 		n = Net()
 		n.randomize()
 		c = Car(80,20,n)
 		cars.append(c)
-	scores = np.zeros(30)
+	scores = np.zeros(24)
 
 	text = ["","","","","",""]
 
@@ -43,7 +43,7 @@ def main():
 	
 	clock = pygame.time.Clock()
 	while 1:
-		clock.tick(1000)
+		#clock.tick(60)
 	
 		if tickCount >= 180:
 			tickCount = 0
@@ -58,9 +58,10 @@ def main():
 			for i in scores.argsort()[::-1]:
 				tempc.append(cars[i])
 			cars = []
-			for i in range(6):
-				for j in range(6):
+			for i in range(4):
+				for j in range(4):
 					if not j == i:
+						cars.append(Car(80,20,Net.CHILD(tempc[i].getNet(), tempc[j].getNet())))	
 						cars.append(Car(80,20,Net.CHILD(tempc[i].getNet(), tempc[j].getNet())))	
 			print len(cars)
 			carIndex = 0	
