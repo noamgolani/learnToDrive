@@ -28,8 +28,8 @@ class Net(object):
 		return self.w1,self.w2,self.w3
 	def CHILD(n1,n2):
 		def a(a ,b):
-			if np.random.rand() < 0.015:
-				return np.random.rand() * 2 - 1 
+			if np.random.rand() < 0.01:
+				return (a+b)/2 + (np.random.rand() * 2 - 1) / 3
 			else: 
 				if np.random.rand() > 0.5:
 					return a
@@ -101,12 +101,12 @@ class Car(object):
 		temp = np.array([np.sin(angle) * 30, np.cos(angle) * 30]) + self.l
 		pygame.draw.line(screen, c, self.l.astype(int), temp.astype(int))
 
-		temp = np.array([np.sin(angle-np.pi/4) * self.view[0] * 100, np.cos(angle-np.pi/4) * self.view[0] * 100]) + self.l
-		pygame.draw.circle(screen, (128,128,255), temp.astype(int),5)
-		temp = np.array([np.sin(angle) * self.view[1] * 100, np.cos(angle) * self.view[1] * 100]) + self.l
-		pygame.draw.circle(screen, (128,128,255), temp.astype(int),5)
-		temp = np.array([np.sin(angle+np.pi/4) * self.view[2] * 100, np.cos(angle+np.pi/4) * self.view[2] * 100]) + self.l
-		pygame.draw.circle(screen, (128,128,255), temp.astype(int),5)
+		#temp = np.array([np.sin(angle-np.pi/4) * self.view[0] * 100, np.cos(angle-np.pi/4) * self.view[0] * 100]) + self.l
+		#pygame.draw.circle(screen, (128,128,255), temp.astype(int),5)
+	#	temp = np.array([np.sin(angle) * self.view[1] * 100, np.cos(angle) * self.view[1] * 100]) + self.l
+	#	pygame.draw.circle(screen, (128,128,255), temp.astype(int),5)
+	#	temp = np.array([np.sin(angle+np.pi/4) * self.view[2] * 100, np.cos(angle+np.pi/4) * self.view[2] * 100]) + self.l
+	#	pygame.draw.circle(screen, (128,128,255), temp.astype(int),5)
 	def getXY(self):
 		return int(self.l[0]),int(self.l[1])
 	def setXY(self, x, y):
