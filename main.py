@@ -5,17 +5,25 @@ from lib import Car
 from lib import Net
 import time
 
-def main():
+SIZE = WIDTH, HEIGHT = 960, 640
+
+global m, cars, screen
+
+def init():
+	global m, cars, screen
+
 	pygame.init()
-
-	pygame.key.set_repeat(100,10)		
 	
-	size = width, height = 960, 640
-	white = 255, 255, 255
-
-	screen = pygame.display.set_mode(size)
+	screen = pygame.display.set_mode(SIZE)
+	pygame.display.set_caption("Car learning")
+	
 	m = pygame.image.load("static/map2.png")
 	m = m.convert()
+
+def main():	
+	global m, cars, screen
+	
+	init()	
 
 	cars = []
 	for i in range(30):
@@ -82,7 +90,7 @@ def main():
 
 		x,y = cars[carIndex].getXY()
 
-		if x < 0 or x > width or y < 0 or y > height or m.get_at((x,y)) == (255,200,255,255) or m.get_at((x, y)) == (0,0,0,255):
+		if x < 0 or x > WIDTH or y < 0 or y > HEIGHT or m.get_at((x,y)) == (255,200,255,255) or m.get_at((x, y)) == (0,0,0,255):
 			carIndex += 1
 			tickCount = 0
 			continue
@@ -102,7 +110,7 @@ def main():
 			f = pygame.font.SysFont("Comic Sans MS", 30)
 			temp = 10
 			for t in text:
-				screen.blit(f.render(t, False, (128,128, 128)),(width - 150,temp))
+				screen.blit(f.render(t, False, (128,128, 128)),(WIDTH - 150,temp))
 				temp += 20
 
 			pygame.display.flip()
