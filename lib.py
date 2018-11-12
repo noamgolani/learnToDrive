@@ -61,7 +61,6 @@ class Car(object):
 		return self.diraction
 	def update(self):
 		V, D = self.net.calc(self.view)
-		print V, D
  		self.diraction = D * np.pi / 2
 		self.v = np.array([np.sin(self.diraction) * V, np.cos(self.diraction) * V]) * 5
 		self.l += self.v

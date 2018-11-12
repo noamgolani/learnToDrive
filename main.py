@@ -1,16 +1,14 @@
 import sys, pygame
 import numpy as np
-import matplotlib.pyplot as plt
 from lib import Car
 from lib import Net
-import time
 
 SIZE = WIDTH, HEIGHT = 960, 640
-
-global m, cars, screen
+CARS = 40
+PERENTS_SIZE = 5
 
 def init():
-	global m, cars, screen
+	global m, cars, screen, text, scores, bestS
 
 	pygame.init()
 	
@@ -20,53 +18,53 @@ def init():
 	m = pygame.image.load("static/map2.png")
 	m = m.convert()
 
-def main():	
-	global m, cars, screen
-	
-	init()	
-
 	cars = []
-	for i in range(24):
+	for i in range(CARS):
 		n = Net()
 		n.randomize()
 		c = Car(80,20,n)
 		cars.append(c)
-	scores = np.zeros(24)
 
+	scores = np.zeros(CARS)
+	bestS = [0]
+	
 	text = ["","","","","",""]
+
+def new_generation():
+	global scores, cars, bestS
+	tempc = []
+	for i in scores.argsort()[::-1]:
+		tempc.append(cars[i])
+	cars = []
+	for i in range(PERENTS_SIZE):
+		for j in range(PERENTS_SIZE):
+			if not j == i:
+				cars.append(Car(80,20,Net.CHILD(tempc[i].getNet(), tempc[j].getNet())))	
+				cars.append(Car(80,20,Net.CHILD(tempc[i].getNet(), tempc[j].getNet())))	
+	bestS.append(max(scores))
+	print "new generation! | max: " + str(int(max(scores))) + " - avg: " + str(int(np.average(scores)))
+	scores = np.zeros(len(cars))
+
+def main():	
+	global m, cars, screen, text, scores
+	
+	init()	
 
 	carIndex = 0
 	space = False
 	tickCount = 0
 	g = 1
-	bestS = [0]
 	
-	clock = pygame.time.Clock()
 	while 1:
-		#clock.tick(60)
 	
-		if tickCount >= 180:
+		if tickCount >= 1800:
 			tickCount = 0
 			carIndex += 1		
 
 		if carIndex >= len(cars):
-			print "Done"
-			bestS.append(max(scores))
-			#plt.plot(bestS)
-			#plt.show()
-			tempc = []
-			for i in scores.argsort()[::-1]:
-				tempc.append(cars[i])
-			cars = []
-			for i in range(4):
-				for j in range(4):
-					if not j == i:
-						cars.append(Car(80,20,Net.CHILD(tempc[i].getNet(), tempc[j].getNet())))	
-						cars.append(Car(80,20,Net.CHILD(tempc[i].getNet(), tempc[j].getNet())))	
-			print len(cars)
+			new_generation()
 			carIndex = 0	
 			tickCount = 0
-			scores = np.zeros(len(cars))
 			g+= 1
 			continue
 
