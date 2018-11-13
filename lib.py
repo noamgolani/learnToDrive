@@ -65,7 +65,7 @@ class Car(object):
 	def update(self):
 		A, D = self.net.calc(self.view)
  		self.diraction += D * np.pi / 2
-		self.v += np.array([np.sin(self.diraction) * A, np.cos(self.diraction) * A])
+		self.v = np.array([np.sin(self.diraction) * A, np.cos(self.diraction) * A]) * 5
 		V = np.sqrt(np.power(self.v[0],2) + np.power(self.v[1],2))
 		if V >= 8:
 			self.v = (self.v / V) * 8

@@ -102,7 +102,7 @@ def main():
 			screen.blit(m, (0,0))
 			for ci in range(PERENTS_SIZE):
 				c.DRAW(anim[ci][i][0],anim[ci][i][1], screen)
-			text[0] = "Tick: " + str(tickCount)
+			text[0] = "Tick: " + str(i)
 			text[2] = "Generation: " + str(g)
 			text[3] = "G-"+str(g-1)+" Best: " + str(bestS[g-1])
 		
