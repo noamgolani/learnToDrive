@@ -26,15 +26,18 @@ class Net(object):
 		self.w3 = w3
 	def getWeights(self):
 		return self.w1,self.w2,self.w3
-	def CHILD(n1,n2):
+	def CHILD(n1,n2,o):
 		def a(a ,b):
-			if np.random.rand() < 0.01:
-				return (a+b)/2 + (np.random.rand() * 2 - 1) / 3
-			else: 
-				if np.random.rand() > 0.5:
-					return a
-				else :
-					return b
+			if np.random.rand() < 0.02:
+				return (a + b) / 2 + np.random.rand() - 0.5
+			else:
+				if o == 1:
+					if np.random.rand() < 0.5: 
+						return a
+					else:
+						return b
+				elif o == 2:
+					return (a + b) / 2
 		a1,a2,a3 = n1.getWeights()
 		b1,b2,b3 = n2.getWeights()
 		F = np.vectorize(a)
@@ -61,7 +64,7 @@ class Car(object):
 		return self.diraction
 	def update(self):
 		V, D = self.net.calc(self.view)
- 		self.diraction = D * np.pi / 2
+ 		self.diraction += D * np.pi / 2
 		self.v = np.array([np.sin(self.diraction) * V, np.cos(self.diraction) * V]) * 5
 		self.l += self.v
 	def updateView(self, mapp):
@@ -94,8 +97,8 @@ class Car(object):
 	def getView(self):
 		return self.view
 	def draw(self, screen):
-		c = 255, 0, 0
-		pygame.draw.circle(screen, c, self.l.astype(int), 15)
+		c = 255, 0, 0, 100
+		pygame.draw.circle(screen, c, self.l.astype(int), 5)
 
 		angle = self.diraction
 		temp = np.array([np.sin(angle) * 30, np.cos(angle) * 30]) + self.l

@@ -4,8 +4,8 @@ from lib import Car
 from lib import Net
 
 SIZE = WIDTH, HEIGHT = 960, 640
-CARS = 40
-PERENTS_SIZE = 5
+CARS = 24
+PERENTS_SIZE = 4
 
 def init():
 	global m, cars, screen, text, scores, bestS
@@ -15,7 +15,7 @@ def init():
 	screen = pygame.display.set_mode(SIZE)
 	pygame.display.set_caption("Car learning")
 	
-	m = pygame.image.load("static/map2.png")
+	m = pygame.image.load("static/map3.png")
 	m = m.convert()
 
 	cars = []
@@ -39,8 +39,8 @@ def new_generation():
 	for i in range(PERENTS_SIZE):
 		for j in range(PERENTS_SIZE):
 			if not j == i:
-				cars.append(Car(80,20,Net.CHILD(tempc[i].getNet(), tempc[j].getNet())))	
-				cars.append(Car(80,20,Net.CHILD(tempc[i].getNet(), tempc[j].getNet())))	
+				cars.append(Car(80,20,Net.CHILD(tempc[i].getNet(), tempc[j].getNet(), 1)))	
+				cars.append(Car(80,20,Net.CHILD(tempc[i].getNet(), tempc[j].getNet(), 1)))	
 	bestS.append(max(scores))
 	print "new generation! | max: " + str(int(max(scores))) + " - avg: " + str(int(np.average(scores)))
 	scores = np.zeros(len(cars))
@@ -61,15 +61,18 @@ def main():
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_SPACE:
 					if not space:
+						m = pygame.image.load("static/map2.png")
+						m = m.convert()
 						space = True
-						carIndex += 1
 						tickCount = 0
+						new_generation()
+						g += 1
 						continue
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_SPACE:
 					space = False
 
-		if tickCount >= 400:
+		if tickCount >= 1000:
 			tickCount = 0
 			new_generation()
 	 		g += 1
@@ -81,10 +84,13 @@ def main():
 			x,y = cars[carIndex].getXY()
 			if x < 0 or x > WIDTH or y < 0 or y > HEIGHT or m.get_at((x,y)) == (255,200,255,255) or m.get_at((x, y)) == (0,0,0,255):
 				continue				
+			if m.get_at((x,y)) == (255, 255, 200, 255):
+				if scores[carIndex] == 0:
+					scores[carIndex] = 1000 - tickCount
+				continue
 			cars[carIndex].update()
 			cars[carIndex].updateView(m)
 			v = cars[carIndex].getVelocity()
-			scores[carIndex] += np.sqrt(pow(v[0],2) + pow(v[1], 2))	
 
 			cars[carIndex].draw(screen)
 
