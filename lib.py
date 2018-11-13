@@ -11,7 +11,6 @@ class Net(object):
 		self.w2 = np.random.rand(5,5) * 2 -1
 		self.w3 = np.random.rand(5,2) * 2 -1
 	def calc(self, a):
-		#sigmoid = lambda x: 1 / (1 + np.exp(-x))
 		a1 = np.array([a[0],a[1],a[2]])
 		b1 = a1.dot(self.w1)
 		a2 = np.tanh(b1)
