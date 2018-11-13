@@ -45,7 +45,7 @@ class Net(object):
 		return n
 
 class Car(object):
-	def __init__(self, x, y, net = Net()):
+	def __init__(self, x=0, y=0, net = Net()):
 		self.l = np.array([0.0 + x,0.0 + y])
 		self.diraction = 0 
 		self.v = np.array([0.0,0.0]) 
@@ -63,9 +63,12 @@ class Car(object):
 	def getDiraction(self):
 		return self.diraction
 	def update(self):
-		V, D = self.net.calc(self.view)
+		A, D = self.net.calc(self.view)
  		self.diraction += D * np.pi / 2
-		self.v = np.array([np.sin(self.diraction) * V, np.cos(self.diraction) * V]) * 5
+		self.v += np.array([np.sin(self.diraction) * A, np.cos(self.diraction) * A])
+		V = np.sqrt(np.power(self.v[0],2) + np.power(self.v[1],2))
+		if V >= 8:
+			self.v = (self.v / V) * 8
 		self.l += self.v
 	def updateView(self, mapp):
 		temp1,temp2,temp3 = (self.l[0],self.l[1]), (self.l[0],self.l[1]), (self.l[0],self.l[1])
@@ -110,6 +113,14 @@ class Car(object):
 	#	pygame.draw.circle(screen, (128,128,255), temp.astype(int),5)
 	#	temp = np.array([np.sin(angle+np.pi/4) * self.view[2] * 100, np.cos(angle+np.pi/4) * self.view[2] * 100]) + self.l
 	#	pygame.draw.circle(screen, (128,128,255), temp.astype(int),5)
+	def DRAW(self, L, d, screen):
+		l = np.array([L[0], L[1]])
+		c = 255, 0, 0, 100
+		pygame.draw.circle(screen, c, l.astype(int), 5)
+
+		angle = d
+		temp = np.array([np.sin(angle) * 30, np.cos(angle) * 30]) + l
+		pygame.draw.line(screen, c, l.astype(int), temp.astype(int))
 	def getXY(self):
 		return int(self.l[0]),int(self.l[1])
 	def setXY(self, x, y):
