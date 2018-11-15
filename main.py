@@ -8,14 +8,16 @@ CARS = 40
 PERENTS_SIZE = 5
 
 def init():
-	global m, cars, screen, text, scores, bestS
+	global m, cars, screen, text, scores, bestS, space
 
 	pygame.init()
 	
+	space = False
+
 	screen = pygame.display.set_mode(SIZE)
 	pygame.display.set_caption("Car learning")
 	
-	m = pygame.image.load("static/map4.png")
+	m = pygame.image.load("static/map3.png")
 	m = m.convert()
 
 	cars = []
@@ -50,6 +52,7 @@ def new_generation():
 	scores = np.zeros(len(cars))
 
 def check_events():
+	global space, m
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			sys.exit()		 
@@ -70,7 +73,6 @@ def main():
 	init()	
 
 	anim = [[] for x in range(len(cars))]
-	space = False
 	tickCount = 0
 	g = 1
 	
